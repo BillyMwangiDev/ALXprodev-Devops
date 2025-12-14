@@ -22,9 +22,9 @@ fetch_pokemon() {
     echo "Fetching data for $pokemon..."
     
     if curl -s -o "$output_file" -w "%{http_code}" "$API_URL/$pokemon" | grep -q "200"; then
-        echo " Saved data to $output_file"
+        echo "[SUCCESS] Saved data to $output_file"
     else
-        echo " Failed to fetch data for $pokemon" | tee -a "$ERROR_LOG"
+        echo "[ERROR] Failed to fetch data for $pokemon" | tee -a "$ERROR_LOG"
     fi
 }
 
@@ -49,13 +49,13 @@ for pid in "${pids[@]}"; do
 done
 
 echo ""
-echo " Parallel processing complete!"
+echo "[SUCCESS] Parallel processing complete!"
 
 # Check for errors
 if [ -s "$ERROR_LOG" ]; then
-    echo "⚠️  Some errors occurred. Check $ERROR_LOG for details."
+    echo "[WARNING] Some errors occurred. Check $ERROR_LOG for details."
 else
-    echo " All Pokemon data fetched successfully!"
+    echo "[SUCCESS] All Pokemon data fetched successfully!"
 fi
 
 # Display summary

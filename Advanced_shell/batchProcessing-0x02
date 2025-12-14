@@ -29,19 +29,19 @@ fetch_pokemon() {
         http_code=$(curl -s -o "$output_file" -w "%{http_code}" "$API_URL/$pokemon")
         
         if [ "$http_code" = "200" ]; then
-            echo "Saved data to $output_file ✅"
+            echo "Saved data to $output_file [SUCCESS]"
             return 0
         else
             retry_count=$((retry_count + 1))
             if [ $retry_count -lt $MAX_RETRIES ]; then
-                echo "  ⚠️  Request failed (attempt $retry_count/$MAX_RETRIES). Retrying..."
+                echo "  [WARNING] Request failed (attempt $retry_count/$MAX_RETRIES). Retrying..."
                 sleep $DELAY
             fi
         fi
     done
     
     # Log error after max retries
-    echo "  Failed to fetch data for $pokemon after $MAX_RETRIES attempts" | tee -a "$ERROR_LOG"
+    echo "[ERROR] Failed to fetch data for $pokemon after $MAX_RETRIES attempts" | tee -a "$ERROR_LOG"
     echo "  Pokemon: $pokemon, HTTP Code: $http_code, Timestamp: $(date)" >> "$ERROR_LOG"
     return 1
 }
@@ -55,7 +55,7 @@ done
 echo ""
 echo "Batch processing complete!"
 if [ -s "$ERROR_LOG" ]; then
-    echo "⚠️  Some errors occurred. Check $ERROR_LOG for details."
+    echo "[WARNING] Some errors occurred. Check $ERROR_LOG for details."
 else
-    echo " All Pokemon data fetched successfully!"
+    echo "[SUCCESS] All Pokemon data fetched successfully!"
 fi
