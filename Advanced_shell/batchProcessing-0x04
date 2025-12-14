@@ -36,17 +36,22 @@ echo "Starting parallel fetch for ${#POKEMON_LIST[@]} Pokemon..."
 echo ""
 
 # Launch background processes for each Pokemon
-pids=()
 for pokemon in "${POKEMON_LIST[@]}"; do
     fetch_pokemon "$pokemon" &
-    pids+=($!)
 done
+
+# Display running background jobs
+echo "Running background jobs:"
+jobs
 
 # Wait for all background processes to complete
 echo "Waiting for all processes to complete..."
-for pid in "${pids[@]}"; do
-    wait "$pid"
-done
+wait
+
+# Kill any remaining background jobs (cleanup)
+if [ -n "$(jobs -p)" ]; then
+    kill $(jobs -p) 2>/dev/null
+fi
 
 echo ""
 echo "[SUCCESS] Parallel processing complete!"
