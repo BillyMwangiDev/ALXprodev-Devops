@@ -1,10 +1,23 @@
 # ALXprodev-Devops
 
-DevOps projects and automation scripts
+DevOps projects and automation scripts by Billy Mwangi
 
-## Advanced_shell
+## Projects
 
-Collection of advanced shell scripting projects
+### Advanced Shell Scripting
+- API automation scripts
+- System administration tools
+- Shell scripting exercises
 
-### Projects:
-- **apiAutomation-0x00**: API request automation for Pokemon API
+## Directory Structure
+```
+ALXprodev-Devops/
+├── Advanced_shell/
+│   ├── apiAutomation-0x00
+│   ├── data.json
+│   └── README.md
+└── README.md
+```
+
+## Author
+Billy Mwangi
