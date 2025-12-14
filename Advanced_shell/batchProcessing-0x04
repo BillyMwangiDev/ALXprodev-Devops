@@ -1,0 +1,64 @@
+#!/bin/bash
+# Parallel Pokemon data fetching
+
+API_URL="https://pokeapi.co/api/v2/pokemon"
+OUTPUT_DIR="pokemon_data"
+ERROR_LOG="parallel_fetch_errors.txt"
+
+# Pokemon list
+POKEMON_LIST=("bulbasaur" "ivysaur" "venusaur" "charmander" "charmeleon")
+
+# Create output directory
+mkdir -p "$OUTPUT_DIR"
+
+# Clear previous error log
+> "$ERROR_LOG"
+
+# Function to fetch a single Pokemon
+fetch_pokemon() {
+    local pokemon=$1
+    local output_file="$OUTPUT_DIR/${pokemon}.json"
+    
+    echo "Fetching data for $pokemon..."
+    
+    if curl -s -o "$output_file" -w "%{http_code}" "$API_URL/$pokemon" | grep -q "200"; then
+        echo " Saved data to $output_file"
+    else
+        echo " Failed to fetch data for $pokemon" | tee -a "$ERROR_LOG"
+    fi
+}
+
+# Export function and variables for parallel execution
+export -f fetch_pokemon
+export API_URL OUTPUT_DIR ERROR_LOG
+
+echo "Starting parallel fetch for ${#POKEMON_LIST[@]} Pokemon..."
+echo ""
+
+# Launch background processes for each Pokemon
+pids=()
+for pokemon in "${POKEMON_LIST[@]}"; do
+    fetch_pokemon "$pokemon" &
+    pids+=($!)
+done
+
+# Wait for all background processes to complete
+echo "Waiting for all processes to complete..."
+for pid in "${pids[@]}"; do
+    wait "$pid"
+done
+
+echo ""
+echo " Parallel processing complete!"
+
+# Check for errors
+if [ -s "$ERROR_LOG" ]; then
+    echo "⚠️  Some errors occurred. Check $ERROR_LOG for details."
+else
+    echo " All Pokemon data fetched successfully!"
+fi
+
+# Display summary
+echo ""
+echo "Fetched files:"
+ls -lh "$OUTPUT_DIR"

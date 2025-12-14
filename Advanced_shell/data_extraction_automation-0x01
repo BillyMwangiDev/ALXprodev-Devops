@@ -1,0 +1,19 @@
+#!/bin/bash
+# Extract Pokemon data from JSON file
+
+JSON_FILE="data.json"
+
+# Check if file exists
+if [ ! -f "$JSON_FILE" ]; then
+    echo "Error: $JSON_FILE not found!"
+    exit 1
+fi
+
+# Extract data using jq
+name=$(jq -r '.name' "$JSON_FILE" | sed 's/\b\(.\)/\u\1/')
+type=$(jq -r '.types[0].type.name' "$JSON_FILE" | sed 's/\b\(.\)/\u\1/')
+weight=$(jq -r '.weight' "$JSON_FILE" | awk '{print $1/10}')
+height=$(jq -r '.height' "$JSON_FILE" | awk '{print $1/10}')
+
+# Format output
+echo "$name is of type $type, weighs ${weight}kg, and is ${height}m tall."
